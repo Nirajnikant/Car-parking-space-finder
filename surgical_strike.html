@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+		<title>S
+mart Parking System</title> 
+		<script src="web_app_client.js"></script>
+
+		<style>
+.btn {
+  border: none;
+  background-color: inherit;
+  padding: 16px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+}
+/* Orange */
+.warning {
+  color: orange;
+}
+.warning:hover {
+  background: #ff9800;
+  color: white;
+}
+* {
+  box-sizing:border-box;
+}
+
+.leftt {
+  background-color:#2196F3;
+  padding:20px;
+  float:left;
+  width:20%; /* The width is 20%, by default */
+}
+
+.mainn {
+  background-color:#f1f1f1;
+  padding:20px;
+  float:left;
+  width:60%; /* The width is 60%, by default */
+}
+
+.rightt {
+  background-color:#4CAF50;
+  padding:20px;
+  float:left;
+  width:20%; /* The width is 20%, by default */
+}
+
+/* Use a media query to add a break point at 800px: */
+@media screen and (max-width:800px) {
+  .leftt, .mainn, .rightt {
+    width:100%; /* The width is 100%, when the viewport is 800px or smaller */
+  }
+}
+
+		div.header {
+			font-size: 20px;
+			text-align: center;
+			border-style: solid;
+			font-family: 'Arial', sans-serif;
+			background-color: #9933cc;
+			color: #ffffff;
+			padding: 15px;
+		}
+		rainbowParking {
+			display: block;
+			background-color: #dddddd;
+		}
+		
+		indigoParking {
+			display: block;
+			background-color: #dddddd;
+		}
+		div.container {
+        		margin: 5%;   
+        	}
+	        div.right {
+         		background-color: #dddddd;
+			width:100%;  
+		        height:400px;
+			margin-top:20px;
+			float: left;
+        		padding: 10px;		
+			margin-bottom:100px;			  
+	        }
+		div.close {
+			}
+		div.cc {
+			padding: 4%;
+			
+			border-style: hidden;
+		}
+div.ex1 {
+  outline-style: solid;
+  outline-color: red;
+}
+
+		</style>
+	</head>
+	<body onload="javascript:init();geoFindMe()">
+	<p id = "status"></p>
+		<div class="header">
+        	<h1>Smart Parking System</h1>
+		</div>
+
+<div class="container">
+<div class="ex1">
+
+<div class="leftt">
+  <p font-size: 80%;>Staff Parking</p>
+</div>
+
+<div class="mainn">
+  <p><rainbowParking id="rainbow">Receiving Data...</rainbowParking></p>
+</div>
+
+<div class="rightt">
+
+
+<a id = "map-link" target="_blank"></a>
+</div>
+
+</div>
+
+<div class="cc">
+<p></p>
+</div>
+
+<div class="leftt">
+  <p>Staff Parking</p>
+</div>
+
+<div class="mainn">
+  <p><indigoParking id="indigo">Receiving Data...</indigoParking></p>
+</div>
+
+<div class="rightt">
+  <p>Go</p>
+</div>
+
+</div>
+         
+                <div class="container">
+		<div class="right">
+		<div id="map" style="width:100%;height:100%">
+			 
+		</div>
+		</div>
+        	<p id = "status"></p>
+          
+			    
+        	<div id = "websocketelements">
+        	<div id="attributes_log"> 
+		</div>
+        	</div>
+		
+		<div id="close">
+			<a href="javascript:onClose()">Close connection to Parking System</a>
+		</div>
+			<h4>Output Console</h4>
+
+		<div id="output"></div> 
+		</div>
+		<script>
+			function myMap() {
+			var mapCanvas = document.getElementById("map");
+			var mapOptions = {
+			center: new google.maps.LatLng(21.140607, 79.081935 ),
+			zoom: 15
+			}
+			var map = new google.maps.Map(mapCanvas, mapOptions);
+			var r_marker = new google.maps.Marker({
+			// The below line is equivalent to writing:
+			// position: new google.maps.LatLng(-34.397, 150.644)
+			position: {lat: 21.137975, lng: 79.081597},
+			map: map
+			});
+			var i_marker = new google.maps.Marker({
+			// The below line is equivalent to writing:
+			// position: new google.maps.LatLng(-34.397, 150.644)
+			position: {lat: 21.140487, lng:79.077831 },
+			map: map
+			});		  
+			var infowindow = new google.maps.InfoWindow({
+			content: '<p>Staff Parking, 17, Free School Street</p>'
+			});
+			var infowindowindigo = new google.maps.InfoWindow({
+			content: '<p>Indigo Parking, 29, Progoti Street</p>'
+			});
+			google.maps.event.addListener(rainbow_marker, 'click', function() {
+			infowindow.open(map, rainbow_marker);
+			});
+			google.maps.event.addListener(indigo_marker, 'click', function() {
+			infowindowindigo.open(map, indigo_marker);
+			});
+			}
+			
+			
+			
+			
+			function geoFindMe() {
+
+  const status = document.querySelector('#status');
+  const mapLink = document.querySelector('#map-link');
+
+  mapLink.href = '';
+  mapLink.textContent = '';
+
+  function success(position) {
+    const latitude  = position.coords.latitude;
+    const longitude = position.coords.longitude;
+
+    status.textContent = '';
+    mapLink.href = `http://maps.google.com/maps?saddr=${latitude},+${longitude}&daddr=21.140607,+79.081935`;
+
+    mapLink.textContent = ` Go`;
+  }
+
+  function error() {
+    status.textContent = 'Unable to retrieve your location';
+  }
+
+  if (!navigator.geolocation) {
+    status.textContent = 'Geolocation is not supported by your browser';
+  } else {
+    status.textContent = 'Locating…';
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+
+}
+
+document.querySelector('#find-me').addEventListener('click', geoFindMe);
+
+		</script>
+
+        	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDtg7YBsS4L7rcOEVxN3OXtFiwrrJZQidc&callback=myMap"></script>
+	</body>
+
+</html>
+
